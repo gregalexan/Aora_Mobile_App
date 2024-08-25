@@ -1,11 +1,12 @@
-import { View, Text, ScrollView, Image, Dimensions } from 'react-native'
+import { View, Text, ScrollView, Image, Dimensions, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import tw from '@/tailwind.config.native'
 import {images} from '../../constants';
 import FormField from '@/components/FormField';
 import CustomButton from '@/components/CustomButton';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
+import { getCurrentUser, signIn } from '@/lib/appwrite';
 
 const {height: screenHeight} = Dimensions.get('window');
 const containerHeight = screenHeight * 0.85 // 85vh
@@ -17,7 +18,29 @@ const SignIn = () => {
   })
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {}
+  const submit = async () => {
+    if (form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all the fields")
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+        await signIn(form.email, form.password);
+        const result = await getCurrentUser();
+        
+        setUser(result)
+        setIsLoggedIn(true); 
+        
+        Alert.alert("Success", "User signed in successfully")
+        router.replace("/home")
+    } catch (error) {
+        Alert.alert("Error", String(error))
+    } finally {
+      setIsSubmitting(false);
+    }
+
+  }
   return (
     <SafeAreaView style={tw`bg-primary h-full`}>
         <ScrollView>
@@ -27,14 +50,14 @@ const SignIn = () => {
                 <FormField 
                     title="Email"
                     value={form.email}
-                    handleChangeText={({e}:any) => setForm({...form, email: e})}
+                    handleChangeText={(e: string) => setForm({...form, email: e})}
                     otherStyles="mt-7"
                     keyboardType="email-address"
                 />
                 <FormField 
                     title="Password"
                     value={form.password}
-                    handleChangeText={({e}:any) => setForm({...form, password: e})}
+                    handleChangeText={(e: string) => setForm({...form, password: e})}
                     otherStyles="mt-7"
                 />
                 <CustomButton 

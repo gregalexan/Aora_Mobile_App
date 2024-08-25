@@ -5,8 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from '../tailwind.config.native'; // Import custom configuration
 import {images} from '../constants';
 import CustomButton from '@/components/CustomButton';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 export default function App() {
+  const {isLoading, isLoggedIn} = useGlobalContext();
+  if (!isLoading && isLoggedIn) {
+    return <Redirect href="/home" />
+  }
   return (
     <SafeAreaView style={tw`bg-primary h-full`}>
       <ScrollView contentContainerStyle={{height: '100%'}}>
