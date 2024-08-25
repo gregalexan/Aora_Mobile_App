@@ -1,22 +1,15 @@
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet } from 'react-native';
-import { blue } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
+import { View, Text } from 'react-native';
+import tw from 'twrnc'; // Tailwind CSS
 
-export default function HomeScreen() {
+
+export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Aora</Text>
+    <View style={tw`flex-1 items-center justify-center bg-white`}>
+      <Text style={[tw`text-3xl`, {fontFamily: 'Poppins-Black'}]}>Aora!</Text>
       <StatusBar style='auto' />
       <Link href="/profile" style={{color: 'blue'}}>Go to Profile</Link>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
