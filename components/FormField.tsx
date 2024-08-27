@@ -6,7 +6,7 @@ import {icons} from '../constants';
 const FormField = ({title, value, placeholder, handleChangeText, otherStyles, ...props} : any) => {
     const [showPassword, setShowPassword] = useState(false)
   return (
-    <View style={[tw`space-y-2 ${otherStyles}`]}>
+    <View style={[tw`-2 ${otherStyles}`]}>
       <Text style={tw`text-base text-gray-100 font-pmedium`}>{title}</Text>
       <View 
         style={tw`border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row`}
