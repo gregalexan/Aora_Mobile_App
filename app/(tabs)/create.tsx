@@ -8,50 +8,70 @@ import { icons } from '@/constants'
 import CustomButton from '@/components/CustomButton'
 import * as DocumentPicker from 'expo-document-picker';
 import { router } from 'expo-router'
+import { createVideo } from '@/lib/appwrite'
+import { useGlobalContext } from '@/context/GlobalProvider'
+import * as ImagePicker from 'expo-image-picker';
 
+type FormState = {
+  title: string;
+  video: { uri: string } | null;
+  thumbnail: { uri: string } | null;
+  prompt: string;
+};
 
 const Create = () => {
+  const {user} = useGlobalContext();
   const [uploading, setUploading] = useState(false)
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     title: '',
     video: null,
     thumbnail: null,
     prompt: ''
   })
 
-  const openPicker = async (selectType) => {
-    const result = await DocumentPicker.getDocumentAsync(
-      {
-        type: selectType === 'image' ? ['image/png', 'image/jpg'] : ['video/mp4', 'video/gif']
-      }
-    )
+  const openPicker = async (selectType : any) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: selectType === 'image' ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
+      aspect: [4,3],
+      quality: 1
+    })
+
     if (!result.canceled) {
       if (selectType === 'image') {
-        setForm({...form, thumbnail: result.assets[0]})
+        setForm({
+          ...form,
+          thumbnail: result.assets[0],
+        });
+        console.log(form.thumbnail)
       }
       if (selectType === 'video') {
-        setForm({...form, video: result.assets[0]})
+        setForm({
+          ...form,
+          video: result.assets[0],
+        })
       }
-    } else {
-      setTimeout(() => {
-        Alert.alert('Document picked', JSON.stringify(result, null, 2))
-      }, 100)
+      
     }
+
   }
 
+  /* Here is the error!!! */
 
-  const submit = () => {
+  const submit = async () => {
       if (!form.prompt || !form.title || !form.thumbnail || !form.video) {
         return Alert.alert("Please fill in all the fields")
       }
       setUploading(true)
-      try {  
-          
+      try {
+          Alert.alert("HERE")
+          await createVideo({
+            ...form, userId: UserActivation.$id
+          })
           Alert.alert("Success", 'Post uploaded successfully')
           router.push('/home')
 
       } catch (error) {
-        Alert.alert("Error")
+          throw new Error();
       } finally {
         setForm({
           title: '',
@@ -84,9 +104,7 @@ const Create = () => {
                   <Video 
                       source={{uri: form.video.uri}}
                       style={tw`w-full h-64 rounded-2xl`}
-                      useNativeControls
                       resizeMode={ResizeMode.COVER}
-                      isLooping
                   />
                 ) : (
                   <View style={tw`w-full h-40 px-4 bg-black-100 rounded-2xl justify-center items-center`}>
