@@ -7,11 +7,14 @@ import FormField from '@/components/FormField';
 import CustomButton from '@/components/CustomButton';
 import { Link, router } from 'expo-router';
 import { getCurrentUser, signIn } from '@/lib/appwrite';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const {height: screenHeight} = Dimensions.get('window');
 const containerHeight = screenHeight * 0.85 // 85vh
 
 const SignIn = () => {
+  const {setUser, setIsLoggedIn} = useGlobalContext();
+
   const [form, setForm] = useState({
       email: '',
       password: ''
@@ -32,7 +35,6 @@ const SignIn = () => {
         setUser(result)
         setIsLoggedIn(true); 
         
-        Alert.alert("Success", "User signed in successfully")
         router.replace("/home")
     } catch (error) {
         Alert.alert("Error", String(error))

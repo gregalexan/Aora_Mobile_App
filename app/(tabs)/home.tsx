@@ -9,12 +9,12 @@ import EmptyState from '@/components/EmptyState'
 import { getAllPosts, getLatestPosts } from '@/lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite';
 import VideoCard from '@/components/VideoCard'
+import { useGlobalContext } from '@/context/GlobalProvider'
 
 const Home = () => {
+  const {user, setUser, setIsLoggedIn} = useGlobalContext();
   const {data: posts, refetch} = useAppwrite(getAllPosts);
   const {data: latestPosts} = useAppwrite(getLatestPosts);
-  
-  //Alert.alert(String(latestPosts))
   const [refreshing, setRefreshing] = useState(false)
   
   const onRefresh = async () => {
@@ -36,10 +36,10 @@ const Home = () => {
                 <View style={tw`justify-between items-start flex-row mb-6`}>
                     <View>
                         <Text style={tw`font-pmedium text-sm text-gray-100`}>
-                          Welcome Back
+                          Welcome Back,
                         </Text>
                         <Text style={tw`text-2xl font-psemibold text-white`}>
-                          Gregory
+                            {user?.username}
                         </Text>
                     </View>
                     <View style={tw`mt-1.5`}>
