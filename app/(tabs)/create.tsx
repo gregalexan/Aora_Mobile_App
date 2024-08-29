@@ -6,7 +6,6 @@ import FormField from '@/components/FormField'
 import { Video, ResizeMode } from 'expo-av'
 import { icons } from '@/constants'
 import CustomButton from '@/components/CustomButton'
-import * as DocumentPicker from 'expo-document-picker';
 import { router } from 'expo-router'
 import { createVideo } from '@/lib/appwrite'
 import { useGlobalContext } from '@/context/GlobalProvider'
@@ -42,7 +41,6 @@ const Create = () => {
           ...form,
           thumbnail: result.assets[0],
         });
-        console.log(form.thumbnail)
       }
       if (selectType === 'video') {
         setForm({
@@ -55,21 +53,18 @@ const Create = () => {
 
   }
 
-  /* Here is the error!!! */
-
   const submit = async () => {
       if (!form.prompt || !form.title || !form.thumbnail || !form.video) {
         return Alert.alert("Please fill in all the fields")
       }
       setUploading(true)
       try {
-          Alert.alert("HERE")
           await createVideo({
-            ...form, userId: UserActivation.$id
+            ...form,
+            userId: user.$id
           })
           Alert.alert("Success", 'Post uploaded successfully')
           router.push('/home')
-
       } catch (error) {
           throw new Error();
       } finally {
@@ -161,5 +156,4 @@ const Create = () => {
     </SafeAreaView>
   )
 }
-
-export default Create
+export default Create;
